@@ -1,132 +1,160 @@
-type Cell = {
-  value: string;
-  row: number;
-  col: number;
-};
+const isNumberCheck = (input: unknown): input is number => !isNaN(Number(input));
+const isDot = (input: unknown) => input === '.';
 
-const isNumber = (input: unknown): input is number => !isNaN(Number(input));
-const isDot = (input: string) => input === '.' || input === undefined;
-const isValidAdjEl = (input: unknown) =>
-  !isDot(String(input)) && input !== undefined && !'*#+$/&%-@='.includes(String(input));
-
-function findAdjNumbers(matrix: string[][], startRow: number, startCol: number, exploreLeft: boolean = false) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-  const visited: boolean[][] = Array.from({ length: rows }, () => Array(cols).fill(false));
-  const result: string[] = [];
-  const queue: { row: number; col: number }[] = [];
-
-  queue.push({ row: startRow, col: startCol });
-
-  while (queue.length > 0) {
-    const { row, col } = queue.shift()!;
-
-    if (visited[row][col]) {
-      continue;
-    }
-
-    visited[row][col] = true;
-    const currentValue = matrix[row][col];
-
-    if (isValidAdjEl(currentValue)) {
-      result.push(currentValue);
-
-      if (col - 1 >= 0 && !visited[row][col - 1]) {
-        queue.push({ row, col: col - 1 });
-      }
-
-      if (col + 1 < cols && !visited[row][col + 1]) {
-        queue.push({ row, col: col + 1 });
-      }
-    }
-  }
-
-  if (exploreLeft) {
-    return Number(result.reverse().reduce((acc, v) => acc + v, ''));
-  }
-
-  return Number(result.reduce((acc, v) => acc + v, ''));
-}
+const directions = [
+  [-1, -1],
+  [0, -1],
+  [1, -1],
+  [-1, 0],
+  [1, 0],
+  [-1, 1],
+  [0, 1],
+  [1, 1],
+];
 
 const first = (input: string) => {
-  console.log(input);
-  let sum = 0;
-  const parsedInput = input.split('\n').map((line) => line.split(''));
+  return '';
+  // console.log(input);
 
-  parsedInput.forEach((row, i, rows) => {
-    row.forEach((col, j, cols) => {
-      if ('*#+$/&%-@='.includes(col)) {
-        [
-          [-1, 0],
-          [1, 0],
-          [0, -1],
-          [0, 1],
-        ].forEach(([rowOffset, colOffset]) => {
-          if (rows[i + rowOffset] && rows[i + rowOffset][j + colOffset]) {
-            const symbol = rows[i + rowOffset][j + colOffset];
+  // const parsedInput = input.split('\n').map((line) => line.split(''));
 
-            if (isDot(symbol) && rowOffset !== 0) {
-              // ? up/down left
-              if (isNumber(rows[i + rowOffset][j - 1])) {
-                sum = sum + findAdjNumbers(rows, i + rowOffset, j - 1, true);
-                console.log(findAdjNumbers(rows, i + rowOffset, j - 1, true));
-              }
-              // ? up/down right
-              if (isNumber(rows[i + rowOffset][j + 1])) {
-                sum = sum + findAdjNumbers(rows, i + rowOffset, j + 1);
-                console.log(findAdjNumbers(rows, i + rowOffset, j + 1));
-              }
-            } else if (isNumber(symbol) && rowOffset === 0) {
-              // ? left/right
+  // function getSymbol(row: number, col: number, [rowOffset, colOffset]) {
+  //   const symbol = parsedInput[row + rowOffset];
 
-              sum = sum + findAdjNumbers(rows, i + rowOffset, j + colOffset, colOffset < 0);
-              console.log(findAdjNumbers(rows, i + rowOffset, j + colOffset, colOffset < 0));
-            } else if (isNumber(symbol) && rowOffset !== 0) {
-              if (isNumber(rows[i + rowOffset][j - 1]) && isNumber(rows[i + rowOffset][j + 1])) {
-                sum = sum + Number(`${rows[i + rowOffset][j - 1]}${symbol}${rows[i + rowOffset][j + 1]}`);
-                console.log(Number(`${rows[i + rowOffset][j - 1]}${symbol}${rows[i + rowOffset][j + 1]}`));
-              } else {
-                if (!isValidAdjEl(rows[i + rowOffset][j - 1]) && !isValidAdjEl(rows[i + rowOffset][j + 1])) {
-                  sum = sum + Number(symbol);
-                }
+  //   if (symbol === undefined) {
+  //     return undefined;
+  //   }
 
-                if (rowOffset > 0) {
-                  if (isNumber(rows[i + rowOffset][j - 1])) {
-                    sum = sum + findAdjNumbers(rows, i + rowOffset, j, true);
-                    console.log(findAdjNumbers(rows, i + rowOffset, j, true));
-                  } else if (isNumber(rows[i + rowOffset][j + 1])) {
-                    sum = sum + findAdjNumbers(rows, i + rowOffset, j);
-                    console.log(findAdjNumbers(rows, i + rowOffset, j));
-                  }
-                }
+  //   return symbol[col + colOffset];
+  // }
 
-                if (rowOffset < 0) {
-                  if (isNumber(rows[i + rowOffset][j - 1])) {
-                    sum = sum + findAdjNumbers(rows, i + rowOffset, j, true);
-                    console.log(findAdjNumbers(rows, i + rowOffset, j, true));
-                  }
-                  if (isNumber(rows[i + rowOffset][j + 1])) {
-                    sum = sum + findAdjNumbers(rows, i + rowOffset, j);
-                    console.log(findAdjNumbers(rows, i + rowOffset, j));
-                  }
-                }
-              }
-            }
-          }
-        });
-      }
-    });
-  });
+  // let sum = 0;
 
-  return sum;
+  // parsedInput.forEach((row, i) => {
+  //   let isNumber = false;
+  //   let currentNumber = '';
+  //   let toCheck = true;
+
+  //   row.forEach((_, j) => {
+  //     isNumber = isNumberCheck(getSymbol(i, j, [0, 0]));
+
+  //     if (!isNumber && !toCheck) {
+  //       sum += parseInt(currentNumber);
+  //     }
+
+  //     if (!isNumber) {
+  //       currentNumber = '';
+  //       toCheck = true;
+  //     }
+
+  //     if (isNumber && toCheck) {
+  //       const isValid = directions.reduce((acc, [rowOffset, colOffset]) => {
+  //         const symbol = getSymbol(i, j, [rowOffset, colOffset]);
+  //         return acc || (!isDot(symbol) && !isNumberCheck(symbol) && symbol !== undefined);
+  //       }, false);
+
+  //       if (isValid) {
+  //         toCheck = false;
+  //       }
+  //     }
+
+  //     if (isNumber) {
+  //       currentNumber += getSymbol(i, j, [0, 0]);
+  //     }
+  //   });
+
+  //   if (isNumber && !toCheck) {
+  //     sum += parseInt(currentNumber);
+  //   }
+  // });
+
+  // return sum;
 };
 
-const expectedFirstSolution = 'solution 1';
+const expectedFirstSolution = '517021';
 
 const second = (input: string) => {
-  return '';
+  console.log(input);
+
+  const parsedInput = input.split('\n').map((line) => line.split(''));
+
+  function getSymbol(row: number, col: number, [rowOffset, colOffset]) {
+    const symbol = parsedInput[row + rowOffset];
+
+    if (symbol === undefined) {
+      return undefined;
+    }
+
+    return symbol[col + colOffset];
+  }
+
+  const origins: { x: number; y: number; value: number | null }[] = [];
+
+  parsedInput.forEach((row, i) => {
+    let isNumber = false;
+    let currentNumber = '';
+    let toCheck = true;
+
+    row.forEach((_, j) => {
+      isNumber = isNumberCheck(getSymbol(i, j, [0, 0]));
+
+      if (!isNumber && !toCheck) {
+        const idx = origins.findIndex((v) => v.value === null);
+        origins[idx].value = Number(currentNumber);
+      }
+
+      if (!isNumber) {
+        currentNumber = '';
+        toCheck = true;
+      }
+
+      if (isNumber && toCheck) {
+        const isValid = directions.reduce((acc, [rowOffset, colOffset]) => {
+          const symbol = getSymbol(i, j, [rowOffset, colOffset]);
+          if (symbol === '*') {
+            origins.push({
+              x: i + rowOffset,
+              y: j + colOffset,
+              value: null,
+            });
+          }
+          return acc || (!isDot(symbol) && !isNumberCheck(symbol) && symbol !== undefined && symbol === '*');
+        }, false);
+
+        if (isValid) {
+          toCheck = false;
+        }
+      }
+
+      if (isNumber) {
+        currentNumber += getSymbol(i, j, [0, 0]);
+      }
+    });
+
+    if (isNumber && !toCheck) {
+      const idx = origins.findIndex((v) => v.value === null);
+      origins[idx].value = Number(currentNumber);
+    }
+  });
+
+  const gearRatios = origins.filter((v) => origins.filter((el) => el.x === v.x && el.y === v.y).length > 1);
+  const aggregatedGearRatios = gearRatios.reduce<typeof gearRatios>((result, element) => {
+    const { x, y, value } = element;
+
+    const existing = result.find((item) => item.x === x && item.y === y);
+
+    if (existing && existing.value) {
+      existing.value *= value!;
+    } else {
+      result.push({ x, y, value });
+    }
+
+    return result;
+  }, []);
+
+  return aggregatedGearRatios.reduce((acc, v) => acc + v.value!, 0);
 };
 
-const expectedSecondSolution = 'solution 2';
+const expectedSecondSolution = '81296995';
 
 export { expectedFirstSolution, expectedSecondSolution, first, second };

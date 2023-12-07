@@ -32,37 +32,26 @@ function getHandStrength(hand: string) {
     .filter((v) => v >= 2)
     .sort((a, b) => b - a);
 
-  if (!duplicates.length && jokers) {
-    switch (true) {
-      case jokers === 5:
-      case jokers + 1 === 5:
-        return 7;
-      case jokers + 1 === 4:
-        return 6;
-      case jokers + 1 === 3:
-        return 4;
-      case jokers + 1 === 2:
-        return 2;
-      default:
-        return 1;
-    }
-  }
-
   if (duplicates[0]) {
     duplicates[0] = duplicates[0] + (jokers || 0);
   }
 
   switch (true) {
+    case jokers === 5:
+    case jokers + 1 === 5:
     case duplicates[0] === 5:
       return 7;
+    case jokers + 1 === 4:
     case duplicates[0] === 4:
       return 6;
     case duplicates[0] === 3 && duplicates[1] === 2:
       return 5;
+    case jokers + 1 === 3:
     case duplicates[0] === 3:
       return 4;
     case duplicates[0] === 2 && duplicates[1] === 2:
       return 3;
+    case jokers + 1 === 2:
     case duplicates[0] === 2:
       return 2;
     default:

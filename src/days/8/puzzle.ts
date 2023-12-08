@@ -87,13 +87,7 @@ const second = (input: string) => {
     return values.reduce((acc, val) => lcm(acc, val), 1);
   }
 
-  function getSteps(startInstructions: string[]) {
-    const lcm = getLcm(Object.values<number>(steps));
-
-    return lcm;
-  }
-
-  return getSteps(startInstructions);
+  return getLcm(Object.values<number>(steps));
 };
 
 const expectedSecondSolution = '8245452805243';
